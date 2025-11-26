@@ -45,19 +45,20 @@ if (form) {
   }
 
   let i = 0;
-  let timer = null;
-  let firstTimeout = null;
-  let firstRun = true;
 
-  // === Adjust your timings here ===
-  const AUTOPLAY_MS   = 5000; // time between slides after the first switch
-  const FIRST_DELAY_MS = 5000; // initial hold on slide #1 before first switch
-  // ================================
+  // timings (already adjusted slower by +1.5s)
+  const AUTOPLAY_MS = 6500;    // time between slides after first
+  const FIRST_DELAY_MS = 6500; // initial hold on slide #1
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const isMobile = () => window.innerWidth < 900;
 
-  // preload first and trigger initial animation
+  // autoplay state
+  let autoplayTimeout = null;
+  let isFirstCycle = true;
+  let isHovered = false;
+  let pendingSwitch = false;
+
+  // preload first background
   ensureBg(slides[0]);
   dots[0]?.classList.add("is-active");
 
@@ -68,7 +69,7 @@ if (form) {
     });
   });
 
-  // If only one slide, keep it clean
+  // If only one slide, hide controls
   if (slides.length < 2) {
     btnPrev && (btnPrev.style.display = "none");
     btnNext && (btnNext.style.display = "none");
@@ -80,7 +81,9 @@ if (form) {
     if (idx === i) return;
     slides[i].classList.remove("is-active");
     dots[i]?.classList.remove("is-active");
+
     i = (idx + slides.length) % slides.length;
+
     ensureBg(slides[i]);
     slides[i].classList.add("is-active");
     dots[i]?.classList.add("is-active");
@@ -89,43 +92,106 @@ if (form) {
   const next = () => show(i + 1);
   const prev = () => show(i - 1);
 
-  btnNext?.addEventListener("click", next);
-  btnPrev?.addEventListener("click", prev);
-  dots.forEach((d, di) => d.addEventListener("click", () => show(di)));
-
-  function stop() {
-    if (timer) { clearInterval(timer); timer = null; }
-    if (firstTimeout) { clearTimeout(firstTimeout); firstTimeout = null; }
-  }
-
-  function start() {
-    if (reduced || isMobile()) return; // respect accessibility & mobile
-    stop();
-    if (firstRun) {
-      firstTimeout = setTimeout(() => {
-        next();
-        timer = setInterval(next, AUTOPLAY_MS);
-        firstRun = false;
-      }, FIRST_DELAY_MS);
-    } else {
-      timer = setInterval(next, AUTOPLAY_MS);
+  function clearAutoplay() {
+    if (autoplayTimeout) {
+      clearTimeout(autoplayTimeout);
+      autoplayTimeout = null;
     }
   }
 
-  // pause on hover / when tab hidden
-  root.addEventListener("mouseenter", stop);
-  root.addEventListener("mouseleave", start);
-  document.addEventListener("visibilitychange", () => {
-    document.hidden ? stop() : start();
+  function scheduleNext(delay) {
+    if (reduced) return; // ONLY respect reduced motion, not screen size
+
+    clearAutoplay();
+    autoplayTimeout = setTimeout(() => {
+      autoplayTimeout = null;
+
+      // When timer finishes:
+      // - If hovered, mark a pending switch but do NOT change yet.
+      // - If not hovered, switch now and schedule next cycle.
+      if (isHovered) {
+        pendingSwitch = true;
+      } else {
+        next();
+        isFirstCycle = false;
+        scheduleNext(AUTOPLAY_MS);
+      }
+    }, delay);
+  }
+
+  function startAutoplay() {
+    if (reduced) return;
+    const delay = isFirstCycle ? FIRST_DELAY_MS : AUTOPLAY_MS;
+    scheduleNext(delay);
+  }
+
+  // controls
+  btnNext?.addEventListener("click", () => {
+    pendingSwitch = false; // clear any queued auto-switch
+    next();
+    isFirstCycle = false;
+    startAutoplay();
   });
 
-  start();
+  btnPrev?.addEventListener("click", () => {
+    pendingSwitch = false;
+    prev();
+    isFirstCycle = false;
+    startAutoplay();
+  });
+
+  dots.forEach((d, di) =>
+    d.addEventListener("click", () => {
+      if (di === i) return;
+      pendingSwitch = false;
+      show(di);
+      isFirstCycle = false;
+      startAutoplay();
+    })
+  );
+
+  // hover behavior:
+  // 1) Timer continues running in background.
+  // 2) When it finishes while hovered, it does NOT switch.
+  // 3) The moment mouse leaves, if a switch is pending, it switches once.
+  root.addEventListener("mouseenter", () => {
+    isHovered = true;
+  });
+
+  root.addEventListener("mouseleave", () => {
+    isHovered = false;
+
+    if (pendingSwitch) {
+      pendingSwitch = false;
+      next();
+      isFirstCycle = false;
+      startAutoplay();
+    } else if (!autoplayTimeout) {
+      // no timer currently scheduled (e.g., after tab visibility change)
+      startAutoplay();
+    }
+  });
+
+  // pause/resume on tab visibility
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      clearAutoplay();
+    } else if (!isHovered) {
+      startAutoplay();
+    }
+  });
+
+  // initial autoplay start — now runs on ALL screen sizes
+  if (!reduced) {
+    startAutoplay();
+  }
 })();
 
 // ---------- SCROLL-IN ANIMATIONS ----------
 (function () {
   const els = document.querySelectorAll('.fade-in');
   if (!els.length) return;
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
@@ -134,5 +200,6 @@ if (form) {
       }
     });
   }, { threshold: 0.15 });
+
   els.forEach((el) => io.observe(el));
 })();
