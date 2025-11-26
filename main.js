@@ -36,7 +36,19 @@ if (form) {
   const btnPrev = root.querySelector(".prev");
   const btnNext = root.querySelector(".next");
 
-  // lazy set background from data-src
+  // --- NEW: preload all slide images up front so they are ready
+  slides.forEach((slide) => {
+    const src = slide.getAttribute("data-src");
+    if (!src) return;
+    const img = new Image();
+    img.onload = () => {
+      // once loaded, set as background; avoids visible loading on first show
+      slide.style.backgroundImage = `url('${src}')`;
+    };
+    img.src = src;
+  });
+
+  // keep ensureBg as a safety net (in case anything fails)
   function ensureBg(fig) {
     const src = fig.getAttribute("data-src");
     if (src && !fig.style.backgroundImage) {
@@ -58,7 +70,7 @@ if (form) {
   let isHovered = false;
   let pendingSwitch = false;
 
-  // preload first background
+  // make sure first slide has a background as a fallback
   ensureBg(slides[0]);
   dots[0]?.classList.add("is-active");
 
@@ -84,6 +96,7 @@ if (form) {
 
     i = (idx + slides.length) % slides.length;
 
+    // safety in case background not set yet for some reason
     ensureBg(slides[i]);
     slides[i].classList.add("is-active");
     dots[i]?.classList.add("is-active");
@@ -181,7 +194,7 @@ if (form) {
     }
   });
 
-  // initial autoplay start — now runs on ALL screen sizes
+  // initial autoplay start — runs on all screen sizes
   if (!reduced) {
     startAutoplay();
   }
