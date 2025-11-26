@@ -122,7 +122,9 @@ a:hover{ text-decoration:underline; }
 /* softer, slower Ken Burns */
 .slide{
   position:absolute; inset:0;
-  background-position:center; background-size:cover;
+  background-position:center; 
+  background-size:cover;
+  background-color:#e5e7eb; /* NEW: subtle fallback while image is loading */
   opacity:0;
   transform:scale(1.05);
   transition:opacity 450ms ease, transform 12s ease;
