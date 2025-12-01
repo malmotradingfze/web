@@ -45,8 +45,19 @@ a:hover{ text-decoration:underline; }
 /* --- mobile overflow fix for header --- */
 #menu{ flex:1 1 auto; min-width:0; }
 @media (max-width:640px){
-  .nav-inner{ flex-wrap:wrap; gap:8px; padding:10px 12px; }
-  /* turn the menu into a single-row, horizontally scrollable list */
+  .nav-inner{
+    flex-wrap:wrap;
+    gap:8px;
+    padding:10px 12px;
+  }
+
+  /* Brand stays on first row */
+  .brand{
+    order:1;
+    flex:0 0 auto;
+  }
+
+  /* Menu goes to second row */
   #menu{
     order:2;
     width:100%;
@@ -60,7 +71,6 @@ a:hover{ text-decoration:underline; }
   }
   #menu li{ display:inline-block; }
   #menu li a{ display:inline-block; }
-  .brand{ order:1; }
 }
 
 /* ---------- Sections & Cards ---------- */
@@ -77,7 +87,6 @@ a:hover{ text-decoration:underline; }
   transition:transform .25s ease, box-shadow .25s ease;
 }
 .card:hover{ transform:translateY(-4px); box-shadow:0 8px 24px rgba(2,6,23,.08); }
-.card.mini{ grid-column:span 4; } /* product cards */
 
 .pill{
   display:inline-block; font-size:12px; color:#0b3; background:#e8f9ee;
@@ -97,15 +106,84 @@ a:hover{ text-decoration:underline; }
   border-left:4px solid var(--brand);
 }
 
-/* ---------- Products ---------- */
-.cards-3{ display:grid; grid-template-columns:repeat(12,1fr); gap:18px; }
-.product{ background:var(--card); border:1px solid var(--ring); border-radius:18px; padding:16px; }
+/* ---------- Products (cards + carousel) ---------- */
+.cards-3{
+  display:flex;
+  gap:18px;
+}
+.product{
+  background:var(--card);
+  border:1px solid var(--ring);
+  border-radius:18px;
+  padding:16px;
+}
 .product h4{ margin:6px 0 8px; }
 .product small{ color:var(--muted); }
 .img-ph{
-  height:120px; border-radius:12px; border:1px dashed var(--ring);
-  display:grid; place-items:center; color:var(--muted); background:#f4f7fb;
+  height:120px;
+  border-radius:12px;
+  border:1px dashed var(--ring);
+  display:grid;
+  place-items:center;
+  color:var(--muted);
+  background:#f4f7fb;
 }
+.card.mini{
+  /* desktop: 3 per viewport */
+  flex:0 0 calc(33.333% - 12px);
+}
+
+/* Product carousel wrapper */
+.product-carousel{
+  display:flex;
+  align-items:stretch;
+  gap:12px;
+  margin-top:18px;
+}
+
+.product-viewport{
+  flex:1 1 auto;
+  overflow:hidden;
+}
+
+/* ensure track is one horizontal row */
+.product-viewport .cards-3{
+  flex-wrap:nowrap;
+}
+
+/* smaller screens: show fewer per view */
+@media (max-width:900px){
+  .card.mini{
+    flex:0 0 60%;
+  }
+}
+
+@media (max-width:640px){
+  .card.mini{
+    flex:0 0 80%;
+  }
+}
+
+/* left/right buttons for product carousel */
+.prod-ctrl{
+  align-self:center;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--ring);
+  background:#ffffff;
+  display:grid;
+  place-items:center;
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(15,23,42,0.12);
+}
+.prod-ctrl:hover{
+  background:#f9fafb;
+}
+.prod-prev{ margin-left:4px; }
+.prod-next{ margin-right:4px; }
 
 /* ---------- About ---------- */
 .about{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
@@ -119,20 +197,27 @@ a:hover{ text-decoration:underline; }
 }
 .slides{ width:100%; height:100%; position:relative; }
 
-/* softer, slower Ken Burns */
+/* Ken Burns via keyframes (fixes “already zoomed in” first frame) */
 .slide{
   position:absolute; inset:0;
-  background-position:center; 
+  background-position:center;
   background-size:cover;
-  background-color:#e5e7eb; /* NEW: subtle fallback while image is loading */
+  background-color:#e5e7eb; /* subtle fallback while image is loading */
   opacity:0;
   transform:scale(1.05);
-  transition:opacity 450ms ease, transform 12s ease;
-  will-change:transform,opacity;
+  transition:opacity 450ms ease;
+  will-change:opacity, transform;
 }
 .slide.is-active{
   opacity:1;
-  transform:scale(1.15);
+}
+.slide.kenburns{
+  animation:heroZoom 12s ease forwards;
+}
+
+@keyframes heroZoom{
+  from{ transform:scale(1.05); }
+  to{ transform:scale(1.15); }
 }
 
 .slide .overlay{
@@ -173,17 +258,17 @@ a:hover{ text-decoration:underline; }
 .dot.is-active{ background:#fff; }
 
 @media (prefers-reduced-motion:reduce){
-  .slide{ transition:opacity 200ms linear; transform:none !important; }
+  .slide{
+    transition:opacity 200ms linear !important;
+    animation:none !important;
+    transform:none !important;
+  }
 }
 
-/* gentler zoom for mobile */
+/* gentler zoom for mobile (same keyframe, just smaller screen size) */
 @media (max-width:900px){
-  .slide{
-    background-position:center center;
-    transform:scale(1.03);
-  }
-  .slide.is-active{
-    transform:scale(1.10);
+  .hero-slider h1{
+    font-size:clamp(28px,8vw,40px);
   }
   .slide .overlay{
     background:linear-gradient(180deg,
@@ -196,9 +281,6 @@ a:hover{ text-decoration:underline; }
   }
   .hero-slider .overlay{
     padding-left:24px;
-  }
-  .hero-slider h1{
-    font-size:clamp(28px,8vw,40px);
   }
 }
 
