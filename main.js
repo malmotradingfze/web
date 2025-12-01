@@ -14,17 +14,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   });
 });
 
-// Basic contact form handler (no backend yet)
-const form = document.getElementById("contactForm");
-if (form) {
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    alert(`Thanks, ${data.name}! We'll contact you at ${data.email}.`);
-    form.reset();
-  });
-}
-
 // ---------- HERO SLIDER ----------
 (function () {
   const root = document.querySelector(".hero-slider");
@@ -36,19 +25,18 @@ if (form) {
   const btnPrev = root.querySelector(".prev");
   const btnNext = root.querySelector(".next");
 
-  // --- NEW: preload all slide images up front so they are ready
+  // Preload all slide images so they are ready before first show
   slides.forEach((slide) => {
     const src = slide.getAttribute("data-src");
     if (!src) return;
     const img = new Image();
     img.onload = () => {
-      // once loaded, set as background; avoids visible loading on first show
       slide.style.backgroundImage = `url('${src}')`;
     };
     img.src = src;
   });
 
-  // keep ensureBg as a safety net (in case anything fails)
+  // Safety: ensure a background if something fails
   function ensureBg(fig) {
     const src = fig.getAttribute("data-src");
     if (src && !fig.style.backgroundImage) {
@@ -58,52 +46,50 @@ if (form) {
 
   let i = 0;
 
-  // timings (already adjusted slower by +1.5s)
-  const AUTOPLAY_MS = 6500;    // time between slides after first
-  const FIRST_DELAY_MS = 6500; // initial hold on slide #1
+  const AUTOPLAY_MS = 6500;
+  const FIRST_DELAY_MS = 6500;
 
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
 
-  // autoplay state
   let autoplayTimeout = null;
   let isFirstCycle = true;
   let isHovered = false;
   let pendingSwitch = false;
 
-  // make sure first slide has a background as a fallback
-  ensureBg(slides[0]);
-  dots[0]?.classList.add("is-active");
+  if (slides.length < 1) return;
 
-  // Trigger first slide animation on load
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      slides[0].classList.add("is-active");
-    });
-  });
-
-  // If only one slide, hide controls
-  if (slides.length < 2) {
-    btnPrev && (btnPrev.style.display = "none");
-    btnNext && (btnNext.style.display = "none");
-    dotsWrap && (dotsWrap.style.display = "none");
-    return;
+  function deactivateSlide(index) {
+    const s = slides[index];
+    if (!s) return;
+    s.classList.remove("is-active", "kenburns");
   }
 
-  function show(idx) {
-    if (idx === i) return;
-    slides[i].classList.remove("is-active");
+  function activateSlide(index) {
+    const s = slides[index];
+    if (!s) return;
+    ensureBg(s);
+    s.classList.add("is-active");
+    // restart Ken Burns animation
+    s.classList.remove("kenburns");
+    void s.offsetWidth; // force reflow
+    s.classList.add("kenburns");
+  }
+
+  function setActiveIndex(newIndex) {
+    if (newIndex === i) return;
+    deactivateSlide(i);
     dots[i]?.classList.remove("is-active");
 
-    i = (idx + slides.length) % slides.length;
+    i = (newIndex + slides.length) % slides.length;
 
-    // safety in case background not set yet for some reason
-    ensureBg(slides[i]);
-    slides[i].classList.add("is-active");
+    activateSlide(i);
     dots[i]?.classList.add("is-active");
   }
 
-  const next = () => show(i + 1);
-  const prev = () => show(i - 1);
+  const next = () => setActiveIndex(i + 1);
+  const prev = () => setActiveIndex(i - 1);
 
   function clearAutoplay() {
     if (autoplayTimeout) {
@@ -113,16 +99,14 @@ if (form) {
   }
 
   function scheduleNext(delay) {
-    if (reduced) return; // ONLY respect reduced motion, not screen size
+    if (reduced) return;
 
     clearAutoplay();
     autoplayTimeout = setTimeout(() => {
       autoplayTimeout = null;
 
-      // When timer finishes:
-      // - If hovered, mark a pending switch but do NOT change yet.
-      // - If not hovered, switch now and schedule next cycle.
       if (isHovered) {
+        // timer finished while hovered: mark for later
         pendingSwitch = true;
       } else {
         next();
@@ -138,9 +122,31 @@ if (form) {
     scheduleNext(delay);
   }
 
-  // controls
+  // Initial state: clear any classes from HTML, then fade+zoom in slide 0
+  slides.forEach((s) => s.classList.remove("is-active", "kenburns"));
+  dots.forEach((d) => d.classList.remove("is-active"));
+
+  // ensure first slide has background
+  ensureBg(slides[0]);
+
+  // delay activation slightly so we see the animation instead of a frozen end state
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      activateSlide(0);
+      dots[0]?.classList.add("is-active");
+    });
+  });
+
+  if (slides.length < 2) {
+    btnPrev && (btnPrev.style.display = "none");
+    btnNext && (btnNext.style.display = "none");
+    dotsWrap && (dotsWrap.style.display = "none");
+    return;
+  }
+
+  // Controls
   btnNext?.addEventListener("click", () => {
-    pendingSwitch = false; // clear any queued auto-switch
+    pendingSwitch = false;
     next();
     isFirstCycle = false;
     startAutoplay();
@@ -157,16 +163,13 @@ if (form) {
     d.addEventListener("click", () => {
       if (di === i) return;
       pendingSwitch = false;
-      show(di);
+      setActiveIndex(di);
       isFirstCycle = false;
       startAutoplay();
     })
   );
 
-  // hover behavior:
-  // 1) Timer continues running in background.
-  // 2) When it finishes while hovered, it does NOT switch.
-  // 3) The moment mouse leaves, if a switch is pending, it switches once.
+  // Hover behaviour: timer keeps counting, but switch is blocked while hovered
   root.addEventListener("mouseenter", () => {
     isHovered = true;
   });
@@ -180,12 +183,10 @@ if (form) {
       isFirstCycle = false;
       startAutoplay();
     } else if (!autoplayTimeout) {
-      // no timer currently scheduled (e.g., after tab visibility change)
       startAutoplay();
     }
   });
 
-  // pause/resume on tab visibility
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       clearAutoplay();
@@ -194,25 +195,83 @@ if (form) {
     }
   });
 
-  // initial autoplay start — runs on all screen sizes
   if (!reduced) {
     startAutoplay();
   }
 })();
 
-// ---------- SCROLL-IN ANIMATIONS ----------
+// ---------- FEATURED PRODUCTS CAROUSELS (manual, infinite loop, per carousel) ----------
 (function () {
-  const els = document.querySelectorAll('.fade-in');
-  if (!els.length) return;
+  const carousels = document.querySelectorAll(".product-carousel");
+  if (!carousels.length) return;
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
+  carousels.forEach((carousel) => {
+    const viewport = carousel.querySelector(".product-viewport");
+    const track = viewport?.querySelector(".cards-3");
+    const btnPrev = carousel.querySelector(".prod-prev");
+    const btnNext = carousel.querySelector(".prod-next");
+
+    if (!viewport || !track || !btnPrev || !btnNext) return;
+
+    let current = 0;
+
+    function scrollByDirection(dir) {
+      const totalWidth = track.scrollWidth;
+      const viewWidth = viewport.clientWidth;
+
+      // if everything fits, no need to scroll at all
+      if (totalWidth <= viewWidth + 4) return;
+
+      const step = viewWidth * 0.9; // move roughly one "page"
+      const max = Math.max(0, totalWidth - viewWidth);
+
+      current += dir * step;
+
+      // infinite wrap-around
+      if (current < 0) {
+        current = max;
+      } else if (current > max) {
+        current = 0;
+      }
+
+      viewport.scrollTo({
+        left: current,
+        behavior: "smooth",
+      });
+    }
+
+    btnPrev.addEventListener("click", () => scrollByDirection(-1));
+    btnNext.addEventListener("click", () => scrollByDirection(1));
+
+    window.addEventListener("resize", () => {
+      const totalWidth = track.scrollWidth;
+      const viewWidth = viewport.clientWidth;
+      const max = Math.max(0, totalWidth - viewWidth);
+
+      if (current > max) {
+        current = Math.max(0, Math.min(current, max));
+        viewport.scrollTo({ left: current });
       }
     });
-  }, { threshold: 0.15 });
+  });
+})();
+
+// ---------- SCROLL-IN ANIMATIONS ----------
+(function () {
+  const els = document.querySelectorAll(".fade-in");
+  if (!els.length) return;
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("visible");
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
 
   els.forEach((el) => io.observe(el));
 })();
