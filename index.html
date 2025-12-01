@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ACME Industries — Agriculture & Masterbatch</title>
-    <meta name="description" content="ACME Industries operates in agriculture and plastics (masterbatch). Learn about our products, capabilities, and how to reach us." />
+    <meta
+      name="description"
+      content="ACME Industries operates in Agriculture and Plastics (Masterbatch & Additives). Learn about our products, capabilities, and how to reach us."
+    />
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="main.css" />
   </head>
@@ -16,8 +19,9 @@
           <span class="brand-logo" aria-hidden="true"></span>
           <span id="brand-name">ACME Industries</span>
         </div>
+
         <ul id="menu">
-          <li><a href="#home">Home</a></li>
+          <li><a href="#top">Home</a></li>
           <li><a href="#agriculture">Agriculture</a></li>
           <li><a href="#masterbatch">Masterbatch</a></li>
           <li><a href="#about">About</a></li>
@@ -25,11 +29,15 @@
       </div>
     </nav>
 
-    <!-- HERO / Ken Burns Slider -->
-    <header id="home" class="hero hero-slider" aria-label="Featured products">
-      <div class="slides" aria-live="off">
+    <!-- HERO -->
+    <header id="top" class="hero hero-slider" aria-label="Key offerings">
+      <div class="slides">
         <!-- Slide 1 -->
-        <figure class="slide" data-src="white_mb.jpg">
+        <figure
+          id="slide-1"
+          class="slide is-active"
+          data-src="white_mb.jpg"
+        >
           <div class="overlay">
             <p class="eyebrow">Advanced performance</p>
             <h1>White masterbatch</h1>
@@ -62,79 +70,256 @@
 
       <!-- Dots -->
       <div class="dots" role="tablist" aria-label="Hero slides">
-        <button class="dot is-active" role="tab" aria-selected="true" aria-controls="slide-1">1</button>
-        <button class="dot" role="tab" aria-selected="false" aria-controls="slide-2">2</button>
-        <button class="dot" role="tab" aria-selected="false" aria-controls="slide-3">3</button>
+        <button
+          class="dot is-active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="slide-1"
+        >
+          1
+        </button>
+        <button
+          class="dot"
+          role="tab"
+          aria-selected="false"
+          aria-controls="slide-2"
+        >
+          2
+        </button>
+        <button
+          class="dot"
+          role="tab"
+          aria-selected="false"
+          aria-controls="slide-3"
+        >
+          3
+        </button>
       </div>
     </header>
 
-    <!-- FEATURE CARDS -->
-    <section class="grid fade-in" aria-label="Business Lines">
-      <article id="agriculture" class="card">
-        <span class="pill">Agriculture</span>
-        <h3>Inputs &amp; Support</h3>
-        <p class="muted">Fertilizers, seeds, and agronomy guidance to boost yield and consistency.</p>
-        <ul>
-          <li>Fertilizers &amp; soil conditioners</li>
-          <li>Seeds &amp; crop protection</li>
-          <li>On-field advisory</li>
-        </ul>
-      </article>
-      <article id="masterbatch" class="card">
-        <span class="pill">Plastics</span>
-        <h3>Masterbatch &amp; Additives</h3>
-        <p class="muted">Color and functional masterbatch for film, injection, and extrusion applications.</p>
-        <ul>
-          <li>Color &amp; white/black masterbatch</li>
-          <li>UV, slip, and anti-block additives</li>
-          <li>Custom compounding</li>
-        </ul>
-      </article>
-    </section>
+    <!-- MAIN CONTENT -->
+    <main>
+      <!-- TWO BUSINESS LINES -->
+      <section class="section fade-in">
+        <div class="grid">
+          <article id="agriculture" class="card">
+            <p class="pill">Agriculture</p>
+            <h2>Inputs &amp; Support</h2>
+            <p>
+              Fertilizers, seeds, and agronomy guidance to boost yield and
+              quality in challenging conditions.
+            </p>
+            <ul>
+              <li>Water-soluble and NPK blends</li>
+              <li>Seeds &amp; crop protection</li>
+              <li>On-field advisory</li>
+            </ul>
+          </article>
 
-    <!-- PRODUCTS SHOWCASE -->
-    <section class="section alt fade-in" aria-labelledby="products-title">
-      <h2 id="products-title" class="section-title">Featured Products</h2>
-      <p class="lead">A quick look at a few representative SKUs.</p>
-      <div class="cards-3">
-        <div class="product card mini fade-in">
-          <div class="img-ph">Image</div>
-          <h4>MB-W 70 — White Masterbatch</h4>
-          <small>High opacity TiO₂, film &amp; blow molding</small>
+          <article id="masterbatch" class="card">
+            <p class="pill">Plastics</p>
+            <h2>Masterbatch &amp; Additives</h2>
+            <p>
+              Color and functional masterbatch for film, injection, and
+              extrusion.
+            </p>
+            <ul>
+              <li>Color &amp; white/black masterbatch</li>
+              <li>UV, slip, and anti-block additives</li>
+              <li>Custom compounding</li>
+            </ul>
+          </article>
         </div>
-        <div class="product card mini fade-in">
-          <div class="img-ph">Image</div>
-          <h4>UV-A 20 — UV Stabilizer</h4>
-          <small>Greenhouse film durability</small>
-        </div>
-        <div class="product card mini fade-in">
-          <div class="img-ph">Image</div>
-          <h4>Premium NPK 20-20-20</h4>
-          <small>Balanced foliar fertilizer</small>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ABOUT -->
-    <section id="about" class="section fade-in about" aria-label="About">
-      <div>
-        <h2 class="section-title">About Us</h2>
-        <p class="lead">We partner with regional growers and converters, matching reliable supply with practical technical support.</p>
-        <p>Founded in <strong>20XX</strong>, we operate across <strong>MENA</strong> with a focus on service, quality, and long-term relationships.</p>
-      </div>
-      <div class="stat fade-in">
-        <ul>
-          <li><strong>10+ years</strong> industry experience</li>
-          <li><strong>2 business lines</strong>: Agriculture &amp; Plastics</li>
-          <li><strong>ISO/Certs</strong>: (list here)</li>
-        </ul>
-      </div>
-    </section>
+      <!-- AGRICULTURE PRODUCTS SLIDER -->
+      <section class="section alt fade-in" aria-labelledby="agri-products-title">
+        <h2 id="agri-products-title" class="section-title">
+          Agriculture Products
+        </h2>
+        <p class="lead">
+          Key fertilizers and inputs commonly requested by growers.
+        </p>
+
+        <div
+          class="product-carousel"
+          aria-label="Agriculture product list"
+          data-carousel="agriculture"
+        >
+          <button
+            class="prod-ctrl prod-prev"
+            aria-label="Scroll agriculture products left"
+          >
+            ‹
+          </button>
+
+          <div class="product-viewport">
+            <div class="cards-3">
+              <!-- Agri Slot 1 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Premium NPK 20-20-20</h4>
+                <small>Balanced foliar fertilizer</small>
+              </div>
+
+              <!-- Agri Slot 2 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Drip Irrigation NPK Blend</h4>
+                <small>Water-soluble, fertigation ready</small>
+              </div>
+
+              <!-- Agri Slot 3 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>High-K Greenhouse Formula</h4>
+                <small>Potassium-rich for fruiting stages</small>
+              </div>
+
+              <!-- Agri Slot 4 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Trace Elements Mix</h4>
+                <small>Micronutrient correction for soils</small>
+              </div>
+
+              <!-- Agri Slot 5 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Water-Soluble Urea</h4>
+                <small>Efficient nitrogen source</small>
+              </div>
+
+              <!-- Agri Slot 6 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Root Starter</h4>
+                <small>Early-stage establishment support</small>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="prod-ctrl prod-next"
+            aria-label="Scroll agriculture products right"
+          >
+            ›
+          </button>
+        </div>
+      </section>
+
+      <!-- PLASTICS / MASTERBATCH PRODUCTS SLIDER -->
+      <section
+        class="section alt fade-in"
+        aria-labelledby="plastics-products-title"
+      >
+        <h2 id="plastics-products-title" class="section-title">
+          Plastics &amp; Masterbatch Products
+        </h2>
+        <p class="lead">
+          Representative grades for film, injection, and extrusion converters.
+        </p>
+
+        <div
+          class="product-carousel"
+          aria-label="Plastics product list"
+          data-carousel="plastics"
+        >
+          <button
+            class="prod-ctrl prod-prev"
+            aria-label="Scroll plastics products left"
+          >
+            ‹
+          </button>
+
+          <div class="product-viewport">
+            <div class="cards-3">
+              <!-- Plastics Slot 1 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>MB-W 70 — White Masterbatch</h4>
+                <small>High opacity TiO₂, film &amp; blow molding</small>
+              </div>
+
+              <!-- Plastics Slot 2 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>MB-B 35 — Black Masterbatch</h4>
+                <small>High jetness for pipes &amp; films</small>
+              </div>
+
+              <!-- Plastics Slot 3 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Color MB — Custom Shades</h4>
+                <small>Brand-matched colors for packaging</small>
+              </div>
+
+              <!-- Plastics Slot 4 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>UV-A 20 — UV Stabilizer</h4>
+                <small>Greenhouse &amp; tunnel films</small>
+              </div>
+
+              <!-- Plastics Slot 5 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Slip &amp; Anti-block Additive</h4>
+                <small>Smoother film winding &amp; handling</small>
+              </div>
+
+              <!-- Plastics Slot 6 -->
+              <div class="product card mini fade-in">
+                <div class="img-ph">Image</div>
+                <h4>Calcium Filler Masterbatch</h4>
+                <small>Cost optimization for bags &amp; liners</small>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="prod-ctrl prod-next"
+            aria-label="Scroll plastics products right"
+          >
+            ›
+          </button>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" class="section fade-in">
+        <div class="grid">
+          <article class="card">
+            <h2 class="section-title">About Us</h2>
+            <p>
+              We partner with regional growers and converters, matching
+              reliable supply with practical technical support.
+            </p>
+            <p>
+              Founded in <strong>20XX</strong>, we operate across
+              <strong>MENA</strong> with a focus on service, quality, and
+              long-term relationships.
+            </p>
+          </article>
+
+          <aside class="card">
+            <ul>
+              <li><strong>10+ years</strong> industry experience</li>
+              <li>
+                <strong>2 business lines:</strong> Agriculture &amp; Plastics
+              </li>
+              <li><strong>ISO/Certs:</strong> (list here)</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+    </main>
 
     <!-- FOOTER -->
     <footer class="site-footer">
       <div class="footer-top">
-        <a href="#home" class="back-to-top">Back to top ↑</a>
+        <a href="#top" class="back-to-top">Back to top ↑</a>
       </div>
 
       <div class="footer-links single">
@@ -142,16 +327,18 @@
           <h4>Company</h4>
           <ul>
             <li><a href="#about">About Us</a></li>
-            <li><a href="#agriculture">Agriculture Division</a></li>
-            <li><a href="#masterbatch">Plastics Division</a></li>
-            <li><a href="#">Certifications</a></li>
+            <li><a href="#agriculture">Agriculture</a></li>
+            <li><a href="#masterbatch">Masterbatch</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-contact">
         <p>
-          <a href="mailto:info@example.com?subject=Inquiry%20from%20ACME%20Industries%20Website&body=Hello%2C%20I%27d%20like%20to%20ask%20about...">info@example.com</a>
+          <a
+            href="mailto:info@example.com?subject=Inquiry%20from%20Website&amp;body=Hello%2C%20I%27d%20like%20to%20ask%20about..."
+            >info@example.com</a
+          >
         </p>
       </div>
 
@@ -160,7 +347,7 @@
           <span class="brand-logo" aria-hidden="true"></span>
           <span>ACME Industries</span>
         </div>
-        <p class="tagline">Empowering Agriculture & Plastics Innovation</p>
+        <p class="tagline">Empowering Agriculture &amp; Plastics Innovation</p>
         <p>© <span id="year"></span> ACME Industries. All rights reserved.</p>
       </div>
     </footer>
