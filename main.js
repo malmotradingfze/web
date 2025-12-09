@@ -36,7 +36,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     img.src = src;
   });
 
-  // Safety: ensure a background if something fails
   function ensureBg(fig) {
     const src = fig.getAttribute("data-src");
     if (src && !fig.style.backgroundImage) {
@@ -63,7 +62,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   function deactivateSlide(index) {
     const s = slides[index];
     if (!s) return;
-    s.classList.remove("is-active", "kenburns");
+    s.classList.remove("is-active");
   }
 
   function activateSlide(index) {
@@ -71,10 +70,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (!s) return;
     ensureBg(s);
     s.classList.add("is-active");
-    // restart Ken Burns animation
-    s.classList.remove("kenburns");
-    void s.offsetWidth; // force reflow
-    s.classList.add("kenburns");
   }
 
   function setActiveIndex(newIndex) {
@@ -106,7 +101,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
       autoplayTimeout = null;
 
       if (isHovered) {
-        // timer finished while hovered: mark for later
         pendingSwitch = true;
       } else {
         next();
@@ -122,14 +116,12 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     scheduleNext(delay);
   }
 
-  // Initial state: clear any classes from HTML, then fade+zoom in slide 0
-  slides.forEach((s) => s.classList.remove("is-active", "kenburns"));
+  // Initial state
+  slides.forEach((s) => s.classList.remove("is-active"));
   dots.forEach((d) => d.classList.remove("is-active"));
 
-  // ensure first slide has background
   ensureBg(slides[0]);
 
-  // delay activation slightly so we see the animation instead of a frozen end state
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       activateSlide(0);
@@ -144,7 +136,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     return;
   }
 
-  // Controls
   btnNext?.addEventListener("click", () => {
     pendingSwitch = false;
     next();
@@ -169,7 +160,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     })
   );
 
-  // Hover behaviour: timer keeps counting, but switch is blocked while hovered
   root.addEventListener("mouseenter", () => {
     isHovered = true;
   });
@@ -200,7 +190,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   }
 })();
 
-// ---------- FEATURED PRODUCTS CAROUSELS (manual, infinite loop, per carousel) ----------
+// ---------- FEATURED PRODUCTS CAROUSELS ----------
 (function () {
   const carousels = document.querySelectorAll(".product-carousel");
   if (!carousels.length) return;
@@ -219,10 +209,9 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
       const totalWidth = track.scrollWidth;
       const viewWidth = viewport.clientWidth;
 
-      // if everything fits, no need to scroll at all
       if (totalWidth <= viewWidth + 4) return;
 
-      const step = viewWidth * 0.9; // move roughly one "page"
+      const step = viewWidth * 0.9;
       const max = Math.max(0, totalWidth - viewWidth);
 
       current += dir * step;
