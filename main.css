@@ -14,7 +14,6 @@ html,body{
   margin:0; padding:0;
   font-family:Inter,system-ui,sans-serif;
   color:var(--ink); background:var(--bg);
-  /* guard against any accidental horizontal overflow */
   overflow-x:hidden;
 }
 
@@ -30,34 +29,41 @@ a:hover{ text-decoration:underline; }
   max-width:1200px; margin:0 auto;
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 20px; gap:12px;
-  /* allow children to shrink instead of forcing overflow */
   min-width:0;
 }
-.brand{ display:flex; align-items:center; gap:10px; font-weight:700; min-width:0; }
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-weight:700; min-width:0;
+}
 .brand-logo{
   width:36px; height:36px; border-radius:8px;
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
 }
-.nav ul{ list-style:none; display:flex; gap:18px; margin:0; padding:0; min-width:0; }
-.nav li a{ padding:8px 10px; border-radius:10px; }
-.nav li a:hover{ background:rgba(14,165,233,.08); }
+.nav ul{
+  list-style:none;
+  display:flex; gap:18px;
+  margin:0; padding:0; min-width:0;
+}
+.nav li a{
+  padding:8px 10px; border-radius:10px;
+}
+.nav li a:hover{
+  background:rgba(14,165,233,.08);
+}
 
 /* --- mobile overflow fix for header --- */
 #menu{ flex:1 1 auto; min-width:0; }
+
 @media (max-width:640px){
   .nav-inner{
-    flex-wrap:wrap;
-    gap:8px;
-    padding:10px 12px;
+    flex-wrap:wrap; gap:8px; padding:10px 12px;
   }
 
-  /* Brand stays on first row */
   .brand{
     order:1;
     flex:0 0 auto;
   }
 
-  /* Menu goes to second row */
   #menu{
     order:2;
     width:100%;
@@ -74,7 +80,9 @@ a:hover{ text-decoration:underline; }
 }
 
 /* ---------- Sections & Cards ---------- */
-.section, .grid{ max-width:1200px; margin:24px auto; padding:0 20px; }
+.section, .grid{
+  max-width:1200px; margin:24px auto; padding:0 20px;
+}
 
 .grid{
   display:grid; grid-template-columns:repeat(12,1fr); gap:20px;
@@ -86,7 +94,10 @@ a:hover{ text-decoration:underline; }
   border-radius:18px; padding:20px;
   transition:transform .25s ease, box-shadow .25s ease;
 }
-.card:hover{ transform:translateY(-4px); box-shadow:0 8px 24px rgba(2,6,23,.08); }
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 24px rgba(2,6,23,.08);
+}
 
 .pill{
   display:inline-block; font-size:12px; color:#0b3; background:#e8f9ee;
@@ -106,7 +117,7 @@ a:hover{ text-decoration:underline; }
   border-left:4px solid var(--brand);
 }
 
-/* ---------- Products (cards + carousel) ---------- */
+/* ---------- Products & carousels ---------- */
 .cards-3{
   display:flex;
   gap:18px;
@@ -129,7 +140,6 @@ a:hover{ text-decoration:underline; }
   background:#f4f7fb;
 }
 .card.mini{
-  /* desktop: 3 per viewport */
   flex:0 0 calc(33.333% - 12px);
 }
 
@@ -157,7 +167,6 @@ a:hover{ text-decoration:underline; }
     flex:0 0 60%;
   }
 }
-
 @media (max-width:640px){
   .card.mini{
     flex:0 0 80%;
@@ -186,8 +195,13 @@ a:hover{ text-decoration:underline; }
 .prod-next{ margin-right:4px; }
 
 /* ---------- About ---------- */
-.about{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-.stat{ background:var(--card); border:1px solid var(--ring); border-radius:16px; padding:14px; }
+.about{
+  display:grid; grid-template-columns:1fr 1fr; gap:24px;
+}
+.stat{
+  background:var(--card); border:1px solid var(--ring);
+  border-radius:16px; padding:14px;
+}
 
 /* ---------- Hero Slider ---------- */
 .hero.hero-slider{
@@ -195,30 +209,30 @@ a:hover{ text-decoration:underline; }
   position:relative; height:clamp(420px,78vh,760px);
   overflow:hidden; background:#fff; border-radius:0;
 }
-.slides{ width:100%; height:100%; position:relative; }
+.slides{
+  width:100%; height:100%; position:relative;
+}
 
-/* Ken Burns via keyframes (fixes “already zoomed in” first frame) */
+/* Smooth cross-fade + slow zoom, always oversized from center */
 .slide{
   position:absolute; inset:0;
   background-position:center;
   background-size:cover;
-  background-color:#e5e7eb; /* subtle fallback while image is loading */
+  background-color:#e5e7eb;
   opacity:0;
-  transform:scale(1.05);
-  transition:opacity 450ms ease;
+  transform-origin:center center;          /* zoom from the middle */
+  transform:scale(1.12);                  /* already larger than viewport */
+  transition:
+    opacity 700ms ease-in-out,
+    transform 12s ease-out;
   will-change:opacity, transform;
 }
+
 .slide.is-active{
   opacity:1;
-}
-.slide.kenburns{
-  animation:heroZoom 12s ease forwards;
+  transform:scale(1.20);                  /* slow zoom in, still from center */
 }
 
-@keyframes heroZoom{
-  from{ transform:scale(1.05); }
-  to{ transform:scale(1.15); }
-}
 
 .slide .overlay{
   position:absolute; inset:0; display:grid; align-content:center;
@@ -228,14 +242,21 @@ a:hover{ text-decoration:underline; }
               rgba(255,255,255,.15) 60%,
               rgba(255,255,255,0) 64%);
 }
-/* Slight nudge to the right */
-.hero-slider .overlay{ padding-left:clamp(120px,12vw,200px); }
-.eyebrow{ color:var(--muted); margin:0 0 6px; font-weight:600; }
-.hero-slider h1{ font-size:clamp(32px,7vw,68px); line-height:1.02; margin:0 0 10px; }
-.hero-slider .sub{ color:var(--muted); margin:0 0 18px; }
-/* CTA */
-.hero-slider .overlay .btn{ place-self:start; width:auto; max-width:240px; padding-inline:18px; }
+.hero-slider .overlay{
+  padding-left:clamp(120px,12vw,200px);
+}
+.eyebrow{
+  color:var(--muted); margin:0 0 6px; font-weight:600;
+}
+.hero-slider h1{
+  font-size:clamp(32px,7vw,68px);
+  line-height:1.02; margin:0 0 10px;
+}
+.hero-slider .sub{
+  color:var(--muted); margin:0 0 18px;
+}
 
+/* slider arrows */
 .ctrl{
   position:absolute; top:50%; translate:0 -50%;
   border:1px solid var(--ring); background:rgba(255,255,255,.9);
@@ -246,6 +267,7 @@ a:hover{ text-decoration:underline; }
 .ctrl.prev{ left:20px; }
 .ctrl.next{ right:20px; }
 
+/* slider dots */
 .dots{
   position:absolute; left:50%; bottom:12px; translate:-50% 0;
   display:flex; gap:8px;
@@ -260,12 +282,14 @@ a:hover{ text-decoration:underline; }
 @media (prefers-reduced-motion:reduce){
   .slide{
     transition:opacity 200ms linear !important;
-    animation:none !important;
+    transform:none !important;
+  }
+  .slide.is-active{
     transform:none !important;
   }
 }
 
-/* gentler zoom for mobile (same keyframe, just smaller screen size) */
+/* gentler layout tweaks for mobile */
 @media (max-width:900px){
   .hero-slider h1{
     font-size:clamp(28px,8vw,40px);
@@ -285,8 +309,13 @@ a:hover{ text-decoration:underline; }
 }
 
 /* ---------- Scroll-in animation ---------- */
-.fade-in{ opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
-.fade-in.visible{ opacity:1; transform:none; }
+.fade-in{
+  opacity:0; transform:translateY(28px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.fade-in.visible{
+  opacity:1; transform:none;
+}
 
 /* ---------- Footer ---------- */
 .site-footer{
@@ -294,9 +323,15 @@ a:hover{ text-decoration:underline; }
   background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
   color:#e2e8f0; font-size:14px;
 }
-.footer-top{ text-align:center; padding:14px 20px 0; }
-.back-to-top{ color:#e2e8f0; font-weight:600; }
-.back-to-top:hover{ text-decoration:underline; }
+.footer-top{
+  text-align:center; padding:14px 20px 0;
+}
+.back-to-top{
+  color:#e2e8f0; font-weight:600;
+}
+.back-to-top:hover{
+  text-decoration:underline;
+}
 
 .footer-links{
   max-width:1200px; margin:20px auto 0;
@@ -318,25 +353,32 @@ a:hover{ text-decoration:underline; }
   text-align:center; margin:12px 0 20px; font-size:15px;
 }
 .footer-contact a{ color:#38bdf8; font-weight:600; }
-.footer-contact a:hover{ color:#7dd3fc; text-decoration:underline; }
+.footer-contact a:hover{
+  color:#7dd3fc; text-decoration:underline;
+}
 
 .footer-bottom{
   border-top:1px solid rgba(226,232,240,.18);
   max-width:1200px; margin:0 auto; padding:14px 20px 18px;
   display:flex; flex-direction:column; gap:6px; text-align:center;
 }
-.footer-brand{ display:flex; align-items:center; justify-content:center; gap:10px; font-weight:700; }
+.footer-brand{
+  display:flex; align-items:center; justify-content:center;
+  gap:10px; font-weight:700;
+}
 .footer-bottom p{ margin:0; color:#94a3b8; }
-.tagline{ font-style:italic; color:#aab7d4; margin:4px 0; }
+.tagline{
+  font-style:italic; color:#aab7d4; margin:4px 0;
+}
 
 /* body bg */
-body {
+body{
   background: linear-gradient(180deg, #f9fbfa 0%, #e9f7f4 100%);
 }
 
-/* ===== SAFE OVERRIDES (append at end) ===== */
+/* ===== SAFE OVERRIDES ===== */
 
-/* 1) Dark header like footer (links stay readable) */
+/* 1) Dark header like footer */
 .nav{
   background: linear-gradient(180deg, #0f172a, #1e293b) !important;
   border-bottom: 1px solid rgba(255,255,255,0.10) !important;
@@ -351,7 +393,7 @@ body {
 
 /* 2) Slider arrows – more visible */
 .ctrl{
-  background: rgba(15,23,42,0.70) !important; /* deep slate */
+  background: rgba(15,23,42,0.70) !important;
   color: #fff !important;
   width: 44px !important;
   height: 44px !important;
@@ -383,4 +425,28 @@ body {
 .dot.is-active{
   background: #ffffff !important;
   transform: scale(1.3);
+}
+
+/* --- Soft color separation for Agriculture vs Plastics product sliders --- */
+
+/* Agriculture: soft green-tinted cards */
+.product-carousel[data-carousel="agriculture"] .product {
+  background: #f3faf5;
+  border-color: #cee9d6;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.06);
+}
+.product-carousel[data-carousel="agriculture"] .img-ph {
+  background: #e7f5ec;
+  border-color: #cee9d6;
+}
+
+/* Plastics: soft blue-tinted cards */
+.product-carousel[data-carousel="plastics"] .product {
+  background: #f3f7ff;
+  border-color: #cdd9ff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.06);
+}
+.product-carousel[data-carousel="plastics"] .img-ph {
+  background: #edf3ff;
+  border-color: #cdd9ff;
 }
