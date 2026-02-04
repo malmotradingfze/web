@@ -206,28 +206,45 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     let current = 0;
 
     function scrollByDirection(dir) {
-      const totalWidth = track.scrollWidth;
-      const viewWidth = viewport.clientWidth;
+  const totalWidth = track.scrollWidth;
+  const viewWidth = viewport.clientWidth;
 
-      if (totalWidth <= viewWidth + 4) return;
+  if (totalWidth <= viewWidth + 4) return;
 
-      const step = viewWidth * 0.9;
-      const max = Math.max(0, totalWidth - viewWidth);
+  const step = viewWidth; // scroll by full viewport
+  const max = Math.max(0, totalWidth - viewWidth);
 
-      current += dir * step;
+  current += dir * step;
 
-      // infinite wrap-around
-      if (current < 0) {
-        current = max;
-      } else if (current > max) {
-        current = 0;
-      }
+  // clamp first
+  if (current < 0) current = 0;
+  if (current > max) current = max;
 
-      viewport.scrollTo({
-        left: current,
-        behavior: "smooth",
-      });
-    }
+  // wrap ONLY if already at the edge
+  if (dir > 0 && current === max) {
+    viewport.scrollTo({ left: current, behavior: "smooth" });
+    setTimeout(() => {
+      current = 0;
+      viewport.scrollTo({ left: 0, behavior: "smooth" });
+    }, 350);
+    return;
+  }
+
+  if (dir < 0 && current === 0) {
+    viewport.scrollTo({ left: 0, behavior: "smooth" });
+    setTimeout(() => {
+      current = max;
+      viewport.scrollTo({ left: max, behavior: "smooth" });
+    }, 350);
+    return;
+  }
+
+  viewport.scrollTo({
+    left: current,
+    behavior: "smooth",
+  });
+}
+
 
     btnPrev.addEventListener("click", () => scrollByDirection(-1));
     btnNext.addEventListener("click", () => scrollByDirection(1));
