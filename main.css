@@ -130,6 +130,8 @@ a:hover{ text-decoration:underline; }
 }
 .product h4{ margin:6px 0 8px; }
 .product small{ color:var(--muted); }
+
+/* Old placeholder (kept for compatibility) */
 .img-ph{
   height:120px;
   border-radius:12px;
@@ -139,6 +141,35 @@ a:hover{ text-decoration:underline; }
   color:var(--muted);
   background:#f4f7fb;
 }
+
+/* === NEW: Product image normalization (prevents "messy" oversize images) === */
+.product-img-wrap{
+  height:120px;
+  border-radius:12px;
+  border:1px solid var(--ring);
+  background:#f4f7fb;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Real images always fit the slot */
+.product-img-wrap img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;   /* shows full product without cropping */
+}
+
+/* Placeholder that matches the exact same slot sizing */
+.product-img-wrap.is-placeholder{
+  border:1px dashed var(--ring);
+  color:var(--muted);
+  background:#f4f7fb;
+  font-size:14px;
+}
+
 .card.mini{
   flex:0 0 calc(33.333% - 12px);
 }
@@ -232,7 +263,6 @@ a:hover{ text-decoration:underline; }
   opacity:1;
   transform:scale(1.20);                  /* slow zoom in, still from center */
 }
-
 
 .slide .overlay{
   position:absolute; inset:0; display:grid; align-content:center;
@@ -435,7 +465,8 @@ body{
   border-color: #cee9d6;
   box-shadow: 0 8px 20px rgba(22, 163, 74, 0.06);
 }
-.product-carousel[data-carousel="agriculture"] .img-ph {
+.product-carousel[data-carousel="agriculture"] .img-ph,
+.product-carousel[data-carousel="agriculture"] .product-img-wrap {
   background: #e7f5ec;
   border-color: #cee9d6;
 }
@@ -446,7 +477,23 @@ body{
   border-color: #cdd9ff;
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.06);
 }
-.product-carousel[data-carousel="plastics"] .img-ph {
+.product-carousel[data-carousel="plastics"] .img-ph,
+.product-carousel[data-carousel="plastics"] .product-img-wrap {
   background: #edf3ff;
   border-color: #cdd9ff;
+}
+
+/* === Center & lower product card text === */
+.product.card.mini {
+  text-align: center;
+}
+
+.product.card.mini h4 {
+  margin-top: 12px;   /* pushes title lower */
+  margin-bottom: 6px;
+}
+
+.product.card.mini small {
+  display: block;
+  margin-top: 2px;
 }
