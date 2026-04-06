@@ -503,7 +503,7 @@ body{
 
 /* === Logo styling === */
 .logo {
-  height: 40px;
+  height: 30px;
   width: auto;
   object-fit: contain;
 }
