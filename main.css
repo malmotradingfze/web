@@ -497,3 +497,17 @@ body{
   display: block;
   margin-top: 2px;
 }
+
+
+/* For the logo */
+
+/* === Logo styling === */
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer-logo {
+  height: 40px;
+}
