@@ -35,10 +35,10 @@ a:hover{ text-decoration:underline; }
   display:flex; align-items:center; gap:10px;
   font-weight:700; min-width:0;
 }
-.brand-logo{
+/*.brand-logo{
   width:36px; height:36px; border-radius:8px;
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
-}
+}*/
 .nav ul{
   list-style:none;
   display:flex; gap:18px;
@@ -503,7 +503,7 @@ body{
 
 /* === Logo styling === */
 .logo {
-  height: 30px;
+  height: 40px;
   width: auto;
   object-fit: contain;
 }
